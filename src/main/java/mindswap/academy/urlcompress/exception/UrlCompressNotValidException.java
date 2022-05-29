@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UrlCompressNotValidException extends RuntimeException{
 
     public UrlCompressNotValidException(String message) {
-
         super(message);
     }
 }
