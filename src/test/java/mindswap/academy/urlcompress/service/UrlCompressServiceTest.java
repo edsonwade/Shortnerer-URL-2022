@@ -49,7 +49,7 @@ class UrlCompressServiceTest {
      */
     @Test
     void testGetAllUrl2() {
-        when(this.urlCompressRepository.findAll())
+        when(this.urlCompressRepository.findAll()) //TODO this isn't testing anything
                 .thenThrow(new UrlCompressNotValidException("https://example.org/example"));
         assertThrows(UrlCompressNotValidException.class, () -> this.urlCompressService.getAllUrl());
         verify(this.urlCompressRepository).findAll();

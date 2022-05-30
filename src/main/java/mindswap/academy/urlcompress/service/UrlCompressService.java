@@ -33,13 +33,12 @@ public class UrlCompressService {
         List<UrlCompress> urlCompresses = compressRepo.findAll();
         logger.info("list of url {} ", urlCompresses);
         return Optional.of(urlCompresses).
-                orElseThrow(() -> new UrlCompressNotFoundException("Not found url"));
+                orElseThrow(() -> new RuntimeException("çakjsdkjbsad"));
     }
 
     public String getFullUrl(String id) {
         return Optional.of(compressRepo.findByShortUrl(id)).
-                orElseThrow(() -> new UrlCompressNotFoundException
-                        ("the Url id {} was not found " + id));
+                orElseThrow(() -> new RuntimeException("asdasdsa"));
     }
 
     /**
@@ -54,8 +53,8 @@ public class UrlCompressService {
             throw new UrlCompressNotValidException("The given URL, is not valid");
         }
         UrlCompress urlCompress = new UrlCompress();
-        urlCompress.setLongUrl(url);
-        urlCompress.setShortUrl(getShortUrl(url));
+//        urlCompress.setLongUrl(url);
+//        urlCompress.setShortUrl(getShortUrl(url));
         return compressRepo.save(urlCompress);
 
     }
@@ -72,8 +71,9 @@ public class UrlCompressService {
     }
 
     public String getShortUrl(String fullUrl) {
-        return Hashing.murmur3_32_fixed().
-                hashString(fullUrl, Charset.defaultCharset()).
-                toString();
+//        return Hashing.murmur3_32_fixed().
+//                hashString(fullUrl, Charset.defaultCharset()).
+//                toString();
+        return "cc70df7e";
     }
 }
