@@ -33,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 class UrlCompressServiceTest {
 
-
+    //TODO remove spring dependency like @MockBean and @ExtendWith
     @MockBean
     private UrlCompressRepository urlCompressRepository;
 
@@ -43,7 +43,7 @@ class UrlCompressServiceTest {
     /**
      * Method under test: {@link UrlCompressService#getAllUrl()}
      */
-    @Test
+    @Test //TODO fix test names
     void testGetAllUrl() {
         ArrayList<UrlCompress> urlCompressList = new ArrayList<>();
         when(this.urlCompressRepository.findAll()).thenReturn(urlCompressList);

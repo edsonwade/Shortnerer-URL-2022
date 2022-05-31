@@ -1,22 +1,20 @@
 package mindswap.academy.urlcompress.service;
 
 
-import com.google.common.hash.Hashing;
+import org.apache.commons.validator.routines.UrlValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mindswap.academy.urlcompress.Persistence.model.UrlCompress;
 import mindswap.academy.urlcompress.Persistence.repository.UrlCompressRepository;
 import mindswap.academy.urlcompress.exception.UrlCompressNotFoundException;
 import mindswap.academy.urlcompress.exception.UrlCompressNotValidException;
-import org.apache.commons.validator.routines.UrlValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +33,13 @@ public class UrlCompressService {
         List<UrlCompress> urlCompresses = compressRepo.findAll();
         logger.info("list of url {} ", urlCompresses);
         return Optional.of(urlCompresses).
-                orElseThrow(() -> new UrlCompressNotFoundException("Not found url"));
+                orElseThrow(() -> new RuntimeException("askdjhbasjkmd"));
     }
 
     public String getFullUrl(String id) {
         return Optional.of(compressRepo.findByShortUrl(id)).
-                orElseThrow(() -> new UrlCompressNotFoundException
-                        ("the Url id {} was not found " + id));
+                orElseThrow(() -> new RuntimeException(
+                        ("the Url id sadlkhbnaks,jhbdnfound " + id)));
     }
 
     /**
@@ -57,8 +55,8 @@ public class UrlCompressService {
             throw new UrlCompressNotValidException("The given URL, is not valid");
         }
         UrlCompress urlCompress = new UrlCompress();
-        // urlCompress.setLongUrl(url);
-        //urlCompress.setShortUrl(getShortUrl(url));
+         urlCompress.setLongUrl(url);
+        urlCompress.setShortUrl(getShortUrl(url));
         return compressRepo.save(urlCompress);
 
     }
