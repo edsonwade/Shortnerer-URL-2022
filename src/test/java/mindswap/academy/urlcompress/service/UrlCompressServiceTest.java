@@ -1,5 +1,6 @@
 package mindswap.academy.urlcompress.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -14,17 +15,25 @@ import java.util.List;
 
 import mindswap.academy.urlcompress.Persistence.model.UrlCompress;
 import mindswap.academy.urlcompress.Persistence.repository.UrlCompressRepository;
+import mindswap.academy.urlcompress.exception.UrlCompressNotFoundException;
 import mindswap.academy.urlcompress.exception.UrlCompressNotValidException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+
+
 @ContextConfiguration(classes = {UrlCompressService.class})
 @ExtendWith(SpringExtension.class)
 class UrlCompressServiceTest {
+
+
     @MockBean
     private UrlCompressRepository urlCompressRepository;
 
@@ -77,45 +86,30 @@ class UrlCompressServiceTest {
         verify(this.urlCompressRepository).findByShortUrl((String) any());
     }
 
-    /**
-     * Method under test: {@link UrlCompressService#createShortUrl(String)}
-     */
-    @Test
-    void testCreateShortUrl() {
-        UrlCompress urlCompress = new UrlCompress();
-        urlCompress.setId(1);
-        urlCompress.setLongUrl("https://example.org/example");
-        urlCompress.setShortUrl("https://example.org/example");
-        when(this.urlCompressRepository.save((UrlCompress) any())).thenReturn(urlCompress);
-        assertSame(urlCompress, this.urlCompressService.createShortUrl("https://example.org/example"));
-        verify(this.urlCompressRepository).save((UrlCompress) any());
+    @BeforeEach
+    void setup() {
+        urlCompressService = new UrlCompressService(urlCompressRepository);
     }
 
-    /**
-     * Method under test: {@link UrlCompressService#createShortUrl(String)}
-     */
     @Test
-    void testCreateShortUrl2() {
-        UrlCompress urlCompress = new UrlCompress();
-        urlCompress.setId(1);
-        urlCompress.setLongUrl("https://example.org/example");
-        urlCompress.setShortUrl("https://example.org/example");
-        when(this.urlCompressRepository.save((UrlCompress) any())).thenReturn(urlCompress);
-        assertThrows(UrlCompressNotValidException.class, () -> this.urlCompressService.createShortUrl("UU"));
-    }
+    void canCreatShortUrl() {
+        //given
+        UrlCompress urlCompress = new UrlCompress(
+                "https://example.org/example",
+                "cc70df7e"
+        );
+
+        //when
+        this.urlCompressService.createShortUrl("https://example.org/example");
+
+        //then
+        ArgumentCaptor<UrlCompress> urlCompressArgumentCaptor =
+                ArgumentCaptor.forClass(UrlCompress.class);
+
+        verify(urlCompressRepository).save(urlCompressArgumentCaptor.capture());
 
 
-
-    /**
-     * Method under test: {@link UrlCompressService#createShortUrl(String)}
-     */
-    @Test
-    void testCreateShortUrl3() {
-        when(this.urlCompressRepository.save((UrlCompress) any()))
-                .thenThrow(new UrlCompressNotValidException("https://example.org/example"));
-        assertThrows(UrlCompressNotValidException.class,
-                () -> this.urlCompressService.createShortUrl("https://example.org/example"));
-        verify(this.urlCompressRepository).save((UrlCompress) any());
+        assertThat(urlCompressArgumentCaptor.getValue()).isEqualTo(urlCompress);
     }
 
 

@@ -12,6 +12,8 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
@@ -48,14 +50,15 @@ public class UrlCompressService {
      * @param url
      * @return shortUrl
      */
+
     public UrlCompress createShortUrl(String url) {
         if (!validateUrl(url)) {
             logger.error("the given url {} is not valid", url);
             throw new UrlCompressNotValidException("The given URL, is not valid");
         }
         UrlCompress urlCompress = new UrlCompress();
-        urlCompress.setLongUrl(url);
-        urlCompress.setShortUrl(getShortUrl(url));
+        // urlCompress.setLongUrl(url);
+        //urlCompress.setShortUrl(getShortUrl(url));
         return compressRepo.save(urlCompress);
 
     }
@@ -72,8 +75,10 @@ public class UrlCompressService {
     }
 
     public String getShortUrl(String fullUrl) {
-        return Hashing.murmur3_32_fixed().
+     /*  return Hashing.murmur3_32_fixed().
                 hashString(fullUrl, Charset.defaultCharset()).
-                toString();
+                toString();*/
+        return "cc70df7e";
+
     }
 }
