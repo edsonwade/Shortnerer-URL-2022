@@ -1,0 +1,2 @@
+#this is required by mockito to mock final classes
+mock-maker-inline
