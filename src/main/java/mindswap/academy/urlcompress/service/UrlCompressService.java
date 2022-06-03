@@ -1,11 +1,17 @@
 package mindswap.academy.urlcompress.service;
 
 
+import com.google.common.hash.HashFunction;
+
 import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,33 +19,31 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mindswap.academy.urlcompress.Persistence.model.UrlCompress;
 import mindswap.academy.urlcompress.Persistence.repository.UrlCompressRepository;
-import mindswap.academy.urlcompress.exception.UrlCompressNotFoundException;
 import mindswap.academy.urlcompress.exception.UrlCompressNotValidException;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Component
 public class UrlCompressService {
 
 
     private final Logger logger = LoggerFactory.getLogger(UrlCompressService.class);
     private final UrlCompressRepository compressRepo;
+    private final HashFunction hashing;
 
 
     /**
      * @return list of all urls
      */
     public List<UrlCompress> getAllUrl() {
-        List<UrlCompress> urlCompresses = compressRepo.findAll();
-        logger.info("list of url {} ", urlCompresses);
-        return Optional.of(urlCompresses).
-                orElseThrow(() -> new RuntimeException("askdjhbasjkmd"));
+        return compressRepo.findAll();
     }
 
-    public String getFullUrl(String id) {
-        return Optional.of(compressRepo.findByShortUrl(id)).
+    public String getLongUrl(String shortUrl) {
+        return Optional.of(compressRepo.findByShortUrl(shortUrl)).
                 orElseThrow(() -> new RuntimeException(
-                        ("the Url id sadlkhbnaks,jhbdnfound " + id)));
+                        ("the  shortUrl sadlkhbnaks,jhbdnfound " + shortUrl)));
     }
 
     /**
@@ -55,28 +59,28 @@ public class UrlCompressService {
             throw new UrlCompressNotValidException("The given URL, is not valid");
         }
         UrlCompress urlCompress = new UrlCompress();
-         urlCompress.setLongUrl(url);
+        urlCompress.setLongUrl(url);
         urlCompress.setShortUrl(getShortUrl(url));
         return compressRepo.save(urlCompress);
-
     }
 
     /**
      * check the validation of the given url.
-     * @param fullUrl
+     *
+     * @param longUrl
      * @return true or false
      */
-    public boolean validateUrl(String fullUrl) {
+    public boolean validateUrl(String longUrl) {
         return UrlValidator.
                 getInstance().
-                isValid(fullUrl);
+                isValid(longUrl);
     }
 
     public String getShortUrl(String fullUrl) {
-     /*  return Hashing.murmur3_32_fixed().
-                hashString(fullUrl, Charset.defaultCharset()).
-                toString();*/
-        return "cc70df7e";
 
+        return hashing
+                    .hashString(fullUrl, Charset.defaultCharset())
+                    .toString();
     }
+
 }
