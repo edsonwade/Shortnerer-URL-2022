@@ -6,45 +6,33 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Mockito.*;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
 import mindswap.academy.urlcompress.Persistence.model.UrlCompress;
 import mindswap.academy.urlcompress.Persistence.repository.UrlCompressRepository;
-import mindswap.academy.urlcompress.exception.UrlCompressNotFoundException;
 import mindswap.academy.urlcompress.exception.UrlCompressNotValidException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
-
-@ContextConfiguration(classes = {UrlCompressService.class})
-@ExtendWith(SpringExtension.class)
 class UrlCompressServiceTest {
+    private final UrlCompressRepository urlCompressRepository = mock(UrlCompressRepository.class);
+    private final HashFunction hashing = mock(HashFunction.class);
+    private final UrlCompressService urlCompressService = new UrlCompressService(urlCompressRepository, hashing);
 
-
-    @MockBean
-    private UrlCompressRepository urlCompressRepository;
-
-    @Autowired
-    private UrlCompressService urlCompressService;
 
     /**
+     * Z
      * Method under test: {@link UrlCompressService#getAllUrl()}
      */
     @Test
-    void testGetAllUrl() {
+    void findAllUrlsThenReturnTheListOfAllUrls() {
         ArrayList<UrlCompress> urlCompressList = new ArrayList<>();
         when(this.urlCompressRepository.findAll()).thenReturn(urlCompressList);
         List<UrlCompress> actualAllUrl = this.urlCompressService.getAllUrl();
@@ -54,71 +42,53 @@ class UrlCompressServiceTest {
     }
 
     /**
-     * Method under test: {@link UrlCompressService#getAllUrl()}
+     * Method under test: {@link UrlCompressService#getLongUrl(String)}
      */
     @Test
-    void testGetAllUrl2() {
-        when(this.urlCompressRepository.findAll())
-                .thenThrow(new UrlCompressNotValidException("https://example.org/example"));
-        assertThrows(UrlCompressNotValidException.class, () -> this.urlCompressService.getAllUrl());
-        verify(this.urlCompressRepository).findAll();
-    }
-
-    /**
-     * Method under test: {@link UrlCompressService#getFullUrl(String)}
-     */
-    @Test
-    void testGetFullUrl() {
+    void findShortUrlThenReturnTheLongUrl() {
         when(this.urlCompressRepository.findByShortUrl((String) any())).thenReturn("https://example.org/example");
-        assertEquals("https://example.org/example", this.urlCompressService.getFullUrl("https://example.org/example"));
+        assertEquals("https://example.org/example", this.urlCompressService.getLongUrl("https://example.org/example"));
         verify(this.urlCompressRepository).findByShortUrl((String) any());
     }
 
     /**
-     * Method under test: {@link UrlCompressService#getFullUrl(String)}
+     * Method under test: {@link UrlCompressService#getLongUrl(String)}
      */
     @Test
-    void testGetFullUrl2() {
+    void findShortUrlThenReturnTheLongUrlIfTheShortUrlIsNotFoundThrowsRuntimeException() {
         when(this.urlCompressRepository.findByShortUrl((String) any()))
                 .thenThrow(new UrlCompressNotValidException("https://example.org/example"));
         assertThrows(UrlCompressNotValidException.class,
-                () -> this.urlCompressService.getFullUrl("https://example.org/example"));
+                () -> this.urlCompressService.getLongUrl("https://example.org/example"));
         verify(this.urlCompressRepository).findByShortUrl((String) any());
     }
 
-    @BeforeEach
-    void setup() {
-        urlCompressService = new UrlCompressService(urlCompressRepository);
-    }
-
     @Test
-    void canCreatShortUrl() {
+    void GivenLongUrlCreateTheShortUrl() {
         //given
         UrlCompress urlCompress = new UrlCompress(
                 "https://example.org/example",
-                "cc70df7e"
-        );
+                "cc70df7e");
+
+        var hc = mock(HashCode.class);
+
 
         //when
-        this.urlCompressService.createShortUrl("https://example.org/example");
-
-        //then
-        ArgumentCaptor<UrlCompress> urlCompressArgumentCaptor =
-                ArgumentCaptor.forClass(UrlCompress.class);
-
-        verify(urlCompressRepository).save(urlCompressArgumentCaptor.capture());
-
-
-        assertThat(urlCompressArgumentCaptor.getValue()).isEqualTo(urlCompress);
+        when(urlCompressRepository.save(any(UrlCompress.class))).then(returnsFirstArg());
+        when(hc.toString()).thenReturn(urlCompress.getShortUrl());
+        when(hashing.hashString(urlCompress.getLongUrl(), Charset.defaultCharset())).thenReturn(hc);
+        UrlCompress urlCompress1 = this.urlCompressService.createShortUrl("https://example.org/example");
+        //the
+        assertThat(urlCompress1).isEqualTo(urlCompress);
     }
-
 
     /**
      * Method under test: {@link UrlCompressService#validateUrl(String)}
      */
     @Test
-    void testValidateUrl() {
+    void ValidateTheGivenUrlReturnTrueIfTheUrlIsValidIfIsNotReturnFalse() {
         assertTrue(this.urlCompressService.validateUrl("https://example.org/example"));
+        assertTrue(this.urlCompressService.validateUrl("http://example.org/example"));
         assertFalse(this.urlCompressService.validateUrl("UU"));
         assertFalse(this.urlCompressService.validateUrl("[::FFFF:999.999.999.999]:9U"));
         assertFalse(this.urlCompressService.validateUrl("https://example.org/examplehttps://example.org/example"));
@@ -128,9 +98,19 @@ class UrlCompressServiceTest {
     /**
      * Method under test: {@link UrlCompressService#getShortUrl(String)}
      */
-    @Test
-    void testGetShortUrl() {
-        assertEquals("cc70df7e", this.urlCompressService.getShortUrl("https://example.org/example"));
+   @Test
+     void givenALongUrlGetTheShortUrl() {
+       UrlCompress urlCompress = new UrlCompress(
+               "https://example.org/example",
+               "cc70df7e");
+        var hc = mock(HashCode.class);
+
+       when(hc.toString()).thenReturn(urlCompress.getShortUrl());
+       when(hashing.hashString(urlCompress.getLongUrl(), Charset.defaultCharset())).thenReturn(hc);
+       assertEquals("cc70df7e", this.urlCompressService.getShortUrl("https://example.org/example"));
+
     }
+
+
 }
 
