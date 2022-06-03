@@ -18,7 +18,6 @@ import com.google.common.hash.HashFunction;
 import mindswap.academy.urlcompress.Persistence.model.UrlCompress;
 import mindswap.academy.urlcompress.Persistence.repository.UrlCompressRepository;
 import mindswap.academy.urlcompress.exception.UrlCompressNotValidException;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
 
@@ -99,13 +98,18 @@ class UrlCompressServiceTest {
     /**
      * Method under test: {@link UrlCompressService#getShortUrl(String)}
      */
-    /*@Test
-   /*void givenALongUrlGetTheShortUrl() {
+   @Test
+     void givenALongUrlGetTheShortUrl() {
+       UrlCompress urlCompress = new UrlCompress(
+               "https://example.org/example",
+               "cc70df7e");
+        var hc = mock(HashCode.class);
 
-       // verify(this.compressService).getShortUrl(GET_SHORT);
-        //assertEquals("cc70df7e", this.urlCompressService.getShortUrl("https://example.org/example"));
+       when(hc.toString()).thenReturn(urlCompress.getShortUrl());
+       when(hashing.hashString(urlCompress.getLongUrl(), Charset.defaultCharset())).thenReturn(hc);
+       assertEquals("cc70df7e", this.urlCompressService.getShortUrl("https://example.org/example"));
 
-    }*/
+    }
 
 
 }
