@@ -23,7 +23,7 @@ public class UrlCompressController {
         return ResponseEntity.ok().body("Hello world");
    }
 
-    @GetMapping(value = "/url")
+    @GetMapping(value = "url")
     public ResponseEntity<List<UrlCompress>> findAllUrl() {
         return ResponseEntity.ok().body(urlCompressService.getAllUrl());
 
@@ -31,7 +31,7 @@ public class UrlCompressController {
 
     @GetMapping(value="/url/{id}")
     public ResponseEntity<?>getOriginalUrl(@PathVariable(name="id") String id){
-          return ResponseEntity.ok().body(urlCompressService.getFullUrl(id));
+          return ResponseEntity.ok().body(urlCompressService.getLongUrl(id));
     }
 
     @PostMapping(value="/url/create")
