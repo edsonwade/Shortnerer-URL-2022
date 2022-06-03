@@ -3,12 +3,13 @@ package mindswap.academy.urlcompress.service;
 
 import com.google.common.hash.HashFunction;
 
+
 import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import org.springframework.stereotype.Component;
+
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.Charset;
@@ -24,7 +25,6 @@ import mindswap.academy.urlcompress.exception.UrlCompressNotValidException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Component
 public class UrlCompressService {
 
 
@@ -76,10 +76,10 @@ public class UrlCompressService {
                 isValid(longUrl);
     }
 
-    public String getShortUrl(String fullUrl) {
+    public String getShortUrl(String longUrl) {
 
-        return hashing
-                    .hashString(fullUrl, Charset.defaultCharset())
+       return hashing
+                    .hashString(longUrl, Charset.defaultCharset())
                     .toString();
     }
 
