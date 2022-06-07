@@ -37,9 +37,9 @@ public class UrlCompressController {
         return ResponseEntity.ok().body(urlCompressService.getAllUrl());
     }
 
-    @GetMapping(value = "/url/{id}")
-    public ResponseEntity<?> getOriginalUrl(@PathVariable(name = "id") String id) {
-        return ResponseEntity.ok().body(urlCompressService.getLongUrl(id));
+    @GetMapping(value = "/url/{shortUrl}")
+    public ResponseEntity<?> getOriginalUrl(@PathVariable(name = "shortUrl") String shortUrl) {
+        return ResponseEntity.ok().body(urlCompressService.getLongUrl(shortUrl));
     }
 
     @PostMapping(value = "/url/create")

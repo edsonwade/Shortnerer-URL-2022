@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.Arrays;
+import java.util.List;
+
 import mindswap.academy.urlcompress.UrlCompressApplication;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,5 +46,16 @@ public class RequestResponseStep {
     @Then("^I receive a (.*) message$")
     public void assertExpectedMessage(String expectedMessage) {
         assertThat(scenarioContext.getResponseEntity().getBody()).isEqualTo(expectedMessage);
+    }
+
+   /* @Then("^I receive a message that contains (.*)$")
+    public void assertContainsString(String expectedString) {
+        assertThat(scenarioContext.getResponseEntity().getBody()).contains(expectedString);
+    }*/
+
+    @Then("^I should receive (.*)$")
+    public void iShouldReceiveLongUrl(String url) throws Throwable {
+        List<String> items = Arrays.asList(url.split(","));
+        assertThat(scenarioContext.getResponseEntity().getBody()).contains(items);
     }
 }
