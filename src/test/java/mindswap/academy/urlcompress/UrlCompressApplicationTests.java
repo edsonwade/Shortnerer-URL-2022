@@ -3,7 +3,7 @@ package mindswap.academy.urlcompress;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class UrlCompressApplicationTests {
 
     @Test
