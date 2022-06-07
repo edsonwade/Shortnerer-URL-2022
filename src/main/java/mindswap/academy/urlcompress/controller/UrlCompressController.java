@@ -27,8 +27,6 @@ public class UrlCompressController {
     private final UrlCompressService urlCompressService;
 
 
-
-
     @GetMapping(value = "hello")
     public ResponseEntity<String> welcome() {
         return ResponseEntity.ok().body("Hello world");
@@ -37,7 +35,6 @@ public class UrlCompressController {
     @GetMapping(value = "url")
     public ResponseEntity<List<UrlCompress>> findAllUrl() {
         return ResponseEntity.ok().body(urlCompressService.getAllUrl());
-
     }
 
     @GetMapping(value = "/url/{id}")
