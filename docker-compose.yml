@@ -1,20 +1,89 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  mysql-db:
-    image: mysql:8.0
-    container_name: mysql_container
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: mypass
-      MYSQL_DATABASE: url_compress
-    ports :
-      - "3306:3306"
-    cap_add:
-      - SYS_NICE
-  adminer:
-    image: adminer:4
-    container_name: adminer_container
-    restart: always
+#  mindswap-mysql:
+#    image: mysql:8.0
+#    container_name: mindswap-mysql
+#    ports:
+#      - '3306:3306'
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 'mypass'
+#      MYSQL_DATABASE: 'urlcompress'
+#    restart: always
+#    networks:
+#      - mindswap-net
+
+
+
+#  mindswap-app:
+#    image: url_service
+#    container_name: mindswap-app
+#    depends_on:
+#      - mindswap-mysql
+#    ports:
+#      - '8080:8080'
+#    environment:
+#      MYSQL_DATABASE: 'urlcompress'
+#      MYSQL_USER: 'root'
+#      MYSQL_ROOT_PASSWORD: 'mypass'
+#      MYSQL_URL: jdbc:mysql://mindswap-mysql:3306/urlcompress
+#      SERVER_PORT: '8080'
+#      HIBERNATE_DDL_AUTO: 'create-drop'
+#      SPRING_PROFILES_ACTIVE: 'docker'
+#    networks:
+#      - mindswap-net
+#
+#  mindswap-app-2:
+#    image: url_service
+#    container_name: mindswap-app-2
+#    depends_on:
+#      - mindswap-mysql
+#    ports:
+#      - '8081:8080'
+#    environment:
+#      MYSQL_DATABASE: 'urlcompress'
+#      MYSQL_USER: 'root'
+#      MYSQL_ROOT_PASSWORD: 'mypass'
+#      MYSQL_URL: jdbc:mysql://mindswap-mysql:3306/urlcompress
+#      SERVER_PORT: '8080'
+#      HIBERNATE_DDL_AUTO: 'create-drop'
+#      SPRING_PROFILES_ACTIVE: 'docker'
+#    networks:
+#      - mindswap-net
+
+  mindswap-app-mariadb:
+    image: url_service
+    container_name: mindswap-app-3
+    depends_on:
+      - mindswap-mariadb
     ports:
-      - "8080:8080"
+      - '8082:8080'
+    environment:
+      SPRING_DATA_SOURCE: org.mariadb.jdbc.Driver
+      MARIADB_DB: 'urlcompress'
+      MARIADB_USER: 'root'
+      MARIADB_PASSWORD: 'mypass'
+      DATABASE_URL: jdbc:mariadb://mindswap-mariadb:3306/urlcompress
+      SERVER_PORT: '8080'
+      HIBERNATE_DDL_AUTO: 'update'
+      SPRING_PROFILES_ACTIVE: 'docker'
+    networks:
+      - mindswap-net
+
+  mindswap-mariadb:
+    image: mariadb:latest
+    container_name: mindswap-mariadb
+    ports:
+      - '3307:3306'
+    environment:
+      MARIADB_ROOT_PASSWORD: 'mypass'
+      MARIADB_DATABASE: 'mindswap'
+    restart: always
+    networks:
+      - mindswap-net
+
+
+networks:
+  mindswap-net:
+    driver: bridge
+

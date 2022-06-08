@@ -1,0 +1,1 @@
+insert into url(long_url,short_url)values(?,?)
