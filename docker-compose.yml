@@ -86,3 +86,4 @@ services:
 networks:
   mindswap-net:
     driver: bridge
+
