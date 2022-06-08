@@ -6,26 +6,32 @@ services:
     container_name: mindswap-mysql
     ports:
       - '3306:3306'
-
     environment:
       MYSQL_ROOT_PASSWORD: 'mypass'
       MYSQL_DATABASE: 'urlcompress'
     restart: always
+    networks:
+      - mindswap-net
 
 
-#  mindswap-app:
-#    image: url_service
-#    restart: on-failure
-#    container_name: mindswap-app
-#    depends_on:
-#      - mindswap-mysql
-#    ports:
-#      - '8080:8080'
-#
-#    environment:
-#      MYSQL_DATABASE: 'urlcompress'
-#      MYSQL_USER: 'root'
-#      MYSQL_ROOT_PASSWORD: 'mypass'
-#      MYSQL_URL: jdbc:mysql://localhost:3306/url_compress
-#      SERVER_PORT: '8080'
-#      HIBERNATE_DDL_AUTO: 'create-drop'#
+  mindswap-app:
+    image: url_service
+    container_name: mindswap-app
+    depends_on:
+      - mindswap-mysql
+    ports:
+      - '8080:8080'
+    environment:
+      MYSQL_DATABASE: 'urlcompress'
+      MYSQL_USER: 'root'
+      MYSQL_ROOT_PASSWORD: 'mypass'
+      MYSQL_URL: jdbc:mysql://mindswap-mysql:3306/urlcompress
+      SERVER_PORT: '8080'
+      HIBERNATE_DDL_AUTO: 'create-drop'
+      SPRING_PROFILES_ACTIVE: 'docker'
+    networks:
+      - mindswap-net
+
+networks:
+  mindswap-net:
+    driver: bridge
