@@ -52,17 +52,18 @@ services:
 #      - mindswap-net
 
   mindswap-app-mariadb:
-    image: url_service_mariadb
+    image: url_service
     container_name: mindswap-app-3
     depends_on:
       - mindswap-mariadb
     ports:
       - '8082:8080'
     environment:
+      SPRING_DATA_SOURCE: org.mariadb.jdbc.Driver
       MARIADB_DB: 'urlcompress'
       MARIADB_USER: 'root'
       MARIADB_PASSWORD: 'mypass'
-      DATABASE_URL: jdbc:mariadb://mindswap-mariadb:3307/urlcompress
+      DATABASE_URL: jdbc:mariadb://mindswap-mariadb:3306/urlcompress
       SERVER_PORT: '8080'
       HIBERNATE_DDL_AUTO: 'update'
       SPRING_PROFILES_ACTIVE: 'docker'
