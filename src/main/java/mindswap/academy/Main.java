@@ -12,12 +12,12 @@ public class Main {
     static int numberWithMoreOccurency = 0;
     static int maxCount = 0;
 
-    private static List<Integer> memo = new ArrayList<>(Arrays.asList(0, 1));
+
     int sum = 0;
 
     public static void main(String[] args) {
         /* Exercise 1  */
-        int numb = 1000;
+        int numb = 40000;
         int[] sumNumer = new int[]{2, 3, 4, 6, 5, 7, 9, 8};
         List<Integer> integers = Arrays.asList(1, null);
         Map<Integer, Integer> memoizeTable = new HashMap<>(); //
@@ -85,6 +85,7 @@ public class Main {
         return numberWithMoreOccurency;
     }
 
+    private static Map<Integer,Integer> memo = new HashMap<>();
     /**
      * exercise 3 ->faz um metodo que recebe um inteiro n e
      * retorna a soma de todos os numeros da sequencia
@@ -92,10 +93,21 @@ public class Main {
      */
     private static int returnTheSumOfAllNumbersFibonacciSequenceRecursive(int numb) {
 
-        if (numb >= memo.size()) {
-            memo.add(numb, returnTheSumOfAllNumbersFibonacciSequenceRecursive(numb-1) + returnTheSumOfAllNumbersFibonacciSequenceRecursive(numb-2));
+        if(numb<=1){
+            return numb;
         }
-        return memo.get(numb);
+
+        if(memo.containsKey(numb)){
+           return  memo.get(numb);
+        }
+
+       int result =  returnTheSumOfAllNumbersFibonacciSequenceRecursive(numb -1) + returnTheSumOfAllNumbersFibonacciSequenceRecursive(numb -2);
+
+        memo.put(numb,result);
+
+        System.out.println(numb);
+
+        return result;
 
     }
 
@@ -115,12 +127,9 @@ public class Main {
         }
 
         for (int i = 3; i <= numb; i++) {
-
             nextNumber = previousNumber + previewNumber;
             previewNumber = previousNumber;
             previousNumber = nextNumber;
-
-
         }
         return nextNumber;
     }

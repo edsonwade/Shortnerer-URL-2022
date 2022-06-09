@@ -43,7 +43,7 @@ public class UrlCompressService {
     public String getLongUrl(String shortUrl) {
         return Optional.of(compressRepo.findByShortUrl(shortUrl)).
                 orElseThrow(() -> new RuntimeException(
-                        ("the  shortUrl sadlkhbnaks,jhbdnfound " + shortUrl)));
+                        "the  shortUrl sadlkhbnaks,jhbdnfound " + shortUrl));
     }
 
     /**
