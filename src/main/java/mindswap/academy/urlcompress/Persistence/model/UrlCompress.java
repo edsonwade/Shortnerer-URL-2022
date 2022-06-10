@@ -2,14 +2,13 @@ package mindswap.academy.urlcompress.Persistence.model;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
-@Data
 @Table(name="url")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,5 +29,51 @@ public class UrlCompress implements Serializable {
     public UrlCompress(String longUrl, String shortUrl) {
         this.longUrl = longUrl;
         this.shortUrl = shortUrl;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getLongUrl() {
+        return longUrl;
+    }
+
+    public void setLongUrl(String longUrl) {
+        this.longUrl = longUrl;
+    }
+
+    public String getShortUrl() {
+        return shortUrl;
+    }
+
+    public void setShortUrl(String shortUrl) {
+        this.shortUrl = shortUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UrlCompress)) return false;
+        UrlCompress that = (UrlCompress) o;
+        return id == that.id && Objects.equals(longUrl, that.longUrl) && Objects.equals(shortUrl, that.shortUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, longUrl, shortUrl);
+    }
+
+    @Override
+    public String toString() {
+        return "UrlCompress{" +
+                "id=" + id +
+                ", longUrl='" + longUrl + '\'' +
+                ", shortUrl='" + shortUrl + '\'' +
+                '}';
     }
 }

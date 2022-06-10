@@ -5,9 +5,11 @@ import io.cucumber.junit.CucumberOptions;
 
 import org.junit.runner.RunWith;
 
-//
-//@RunWith(Cucumber.class)
-//@CucumberOptions(features = "src/test/resources")
-public class FunctionalTestWithCucumber {
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = "src/test/resources"
+)
+public class FunctionalTest {
 
 }
