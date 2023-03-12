@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: UrlCompress API
+  description: API for shortening URLs
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1/
+paths:
+  /hello:
+    get:
+      summary: Greet the API
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+      operationId: welcome
+    post:
+      summary: Unsupported method
+      responses:
+        '405':
+          description: Method not allowed
+      operationId: postWelcome
+  /url:
+    get:
+      summary: Get all URLs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UrlCompress'
+      operationId: findAllUrl
+  /url/create:
+    post:
+      summary: Create a new short URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+              required:
+                - url
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlCompress'
+      operationId: generateShortUrl
+  /url/{shortUrl}:
+    get:
+      summary: Get original URL from a short URL
+      parameters:
+        - name: shortUrl
+          in: path
+          description: Short URL to be expanded
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: URL not found
+      operationId: getOriginalUrl
+components:
+  schemas:
+    UrlCompress:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        longUrl:
+          type: string
+        shortUrl:
+          type: string
